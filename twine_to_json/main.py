@@ -117,6 +117,7 @@ def get_media_mock(media: str) -> str:
 
 
 def convert(data: io.BytesIO) -> schemas.Result:
+    print(os.listdir(os.getcwd()))
     zip_data = zipfile.ZipFile(data)
     story_files_data = get_story_file_names(zip_data)
     story_bunch = schemas.StoryBunch()
