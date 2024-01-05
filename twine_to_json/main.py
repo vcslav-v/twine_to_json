@@ -117,7 +117,6 @@ def get_media_mock(media: str) -> str:
 
 
 def convert(data: io.BytesIO) -> schemas.Result:
-    print(os.listdir(os.getcwd()))
     zip_data = zipfile.ZipFile(data)
     story_files_data = get_story_file_names(zip_data)
     story_bunch = schemas.StoryBunch()
@@ -134,9 +133,10 @@ def convert(data: io.BytesIO) -> schemas.Result:
         return schemas.Result(data=log_stream.getvalue(), is_ok=False)
 
     zip_buffer = io.BytesIO()
+    directory = os.path.dirname(__file__)
     with zipfile.ZipFile(zip_buffer, 'w') as zf:
         for media in all_media:
-            zf.write(get_media_mock(media), os.path.join('media', media))
+            zf.write(os.path.join(directory, get_media_mock(media)), os.path.join('media', media))
         zf.writestr('story.json', story_bunch.model_dump_json())
     zip_buffer.seek(0)
     return schemas.Result(data=zip_buffer.getvalue(), is_ok=True)
