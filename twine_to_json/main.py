@@ -5,7 +5,7 @@ import io
 import zipfile
 
 
-def parse(zip_data: zipfile.ZipFile) -> dict:
+def get_story_file_names(zip_data: zipfile.ZipFile) -> dict:
     story_file_names = {}
     # Collect html twine files
     for file_name in zip_data.namelist():
@@ -116,7 +116,7 @@ def get_media_mock(media: str) -> str:
         return 'unknown'
 
 
-def parse_twine_to_release(data: io.BytesIO) -> schemas.Result:
+def convert(data: io.BytesIO) -> schemas.Result:
     zip_data = zipfile.ZipFile(data)
     story_files_data = get_story_file_names(zip_data)
     story_bunch = schemas.StoryBunch()
