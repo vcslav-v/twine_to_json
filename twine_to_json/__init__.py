@@ -3,6 +3,6 @@ from twine_to_json.schemas import Result
 from twine_to_json.main import convert
 
 
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 __author__ = 'Vaclav_V'
 __all__ = ['convert', 'Result']

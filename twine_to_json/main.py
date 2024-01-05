@@ -84,6 +84,8 @@ def check_media(story: schemas.Story) -> set[str]:
     for message in story.messages:
         if message.content_type == schemas.ContentType.text and message.media:
             logger.error(f'Text message with media - {message.link} - {message.src}')
+        elif message.content_type == schemas.ContentType.text and not message.message:
+            logger.error(f'Text message without text - {message.link} - {message.src}')
         elif message.content_type != schemas.ContentType.text and not message.media:
             logger.error(f'Media message without media - {message.link} - {message.src}')
 
