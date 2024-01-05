@@ -1,5 +1,5 @@
 from twine_to_json import twine_parser, schemas
-from twine_to_json import logger, log_stream
+from twine_to_json.config import logger, log_stream
 import os
 import io
 import zipfile

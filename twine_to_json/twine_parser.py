@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
-from twine_to_json import schemas, MAX_BUTTON_LEN
-from twine_to_json import logger
+from twine_to_json import schemas
+from twine_to_json.config import logger, MAX_BUTTON_LEN
 import regex as re
 import json
 import zipfile
