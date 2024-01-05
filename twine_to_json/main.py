@@ -130,7 +130,7 @@ def convert(data: io.BytesIO) -> schemas.Result:
 
     if log_stream.getvalue():
         log_stream.seek(0)
-        return schemas.Result(file=log_stream.getvalue(), is_ok=False)
+        return schemas.Result(data=log_stream.getvalue(), is_ok=False)
 
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, 'w') as zf:
@@ -138,4 +138,4 @@ def convert(data: io.BytesIO) -> schemas.Result:
             zf.write(get_media_mock(media), os.path.join('media', media))
         zf.writestr('story.json', story_bunch.model_dump_json())
     zip_buffer.seek(0)
-    return schemas.Result(file=zip_buffer.getvalue(), is_ok=True)
+    return schemas.Result(data=zip_buffer.getvalue(), is_ok=True)

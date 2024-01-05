@@ -85,5 +85,5 @@ class StoryBunch(BaseModel):
 
 
 class Result(BaseModel):
-    file: bytes
+    data: bytes
     is_ok: bool
