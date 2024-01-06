@@ -131,6 +131,17 @@ def check_lang_versions(story_bunch: schemas.StoryBunch):
                 logger.error(f'Link {d_link} from {i_story.language} - {i_msg.src} is not found in {j_story.language} story')
 
 
+def check_reactions(story_bunch: schemas.StoryBunch):
+    for story in story_bunch.stories:
+        if not story.reactions:
+            logger.error(f'There is no reaction for {story.language}')
+            continue
+        reaction_names = [reaction.name for reaction in story.reactions]
+        for message in story.messages:
+            if message.wait_reaction not in reaction_names:
+                logger.error(f'Wrong reaction name {message.wait_reaction} - {message.link} - {message.src}')
+
+
 def convert(data: io.BytesIO) -> schemas.Result:
     zip_data = zipfile.ZipFile(data)
     story_files_data = get_story_file_names(zip_data)
@@ -140,6 +151,7 @@ def convert(data: io.BytesIO) -> schemas.Result:
         story_bunch.stories.append(twine_parser.parse_twine(lang, zip_data, **file_pack))
     all_media = set()
     check_lang_versions(story_bunch)
+    check_reactions(story_bunch)
     for story in story_bunch.stories:
         check_story_connection(story)
         all_media = all_media.union(check_media(story))

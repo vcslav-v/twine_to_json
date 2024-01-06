@@ -75,7 +75,7 @@ class Message(BaseModel):
 class Story(BaseModel):
     language: Language
     messages: list[Message] = []
-    reactions: list[Reaction] = [Reaction()]
+    reactions: list[Reaction] = []
     start_msg_link: str | None = None
 
 
