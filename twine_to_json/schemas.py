@@ -3,7 +3,6 @@ from pydantic.functional_validators import field_validator
 from enum import Enum
 import uuid
 from typing import Union
-import io
 
 
 class Language(str, Enum):

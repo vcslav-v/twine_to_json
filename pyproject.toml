@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "twine-to-json"
-version = "0.3.7"
+version = "0.3.8"
 description = ""
 authors = ["vaclav-v"]
 readme = "README.md"
