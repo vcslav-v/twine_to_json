@@ -118,6 +118,19 @@ def get_media_mock(media: str) -> str:
         return 'unknown'
 
 
+def check_lang_versions(story_bunch: schemas.StoryBunch):
+    for i_story in story_bunch.stories:
+        i_links = set([message.link for message in i_story.messages])
+        for j_story in story_bunch.stories:
+            if i_story.language == j_story.language:
+                continue
+            j_links = set([message.link for message in j_story.messages])
+            links_diff = i_links.difference(j_links)
+            for d_link in links_diff:
+                i_msg = [message for message in i_story.messages if message.link == d_link][0]
+                logger.error(f'Link {d_link} from {i_story.language} - {i_msg.src} is not found in {j_story.language} story')
+
+
 def convert(data: io.BytesIO) -> schemas.Result:
     zip_data = zipfile.ZipFile(data)
     story_files_data = get_story_file_names(zip_data)
@@ -126,6 +139,7 @@ def convert(data: io.BytesIO) -> schemas.Result:
         logger.info(f'Parsing {lang} story pack')
         story_bunch.stories.append(twine_parser.parse_twine(lang, zip_data, **file_pack))
     all_media = set()
+    check_lang_versions(story_bunch)
     for story in story_bunch.stories:
         check_story_connection(story)
         all_media = all_media.union(check_media(story))
@@ -142,3 +156,8 @@ def convert(data: io.BytesIO) -> schemas.Result:
         zf.writestr('story.json', story_bunch.model_dump_json())
     zip_buffer.seek(0)
     return schemas.Result(data=zip_buffer.getvalue(), is_ok=True)
+
+
+if __name__ == '__main__':
+    with open('test.zip', 'rb') as f:
+        convert(f)

@@ -143,3 +143,4 @@ setup.cfg
 /twine
 /json
 .DS_Store
+test.zip
