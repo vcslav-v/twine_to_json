@@ -128,7 +128,9 @@ def check_lang_versions(story_bunch: schemas.StoryBunch):
             links_diff = i_links.difference(j_links)
             for d_link in links_diff:
                 i_msg = [message for message in i_story.messages if message.link == d_link][0]
-                logger.error(f'Link {d_link} from {i_story.language} - {i_msg.src} is not found in {j_story.language} story')
+                logger.error(
+                    f'Link {d_link} from {i_story.language} - {i_msg.src} is not found in {j_story.language} story'
+                )
 
 
 def check_reactions(story_bunch: schemas.StoryBunch):
@@ -172,4 +174,7 @@ def convert(data: io.BytesIO) -> schemas.Result:
 
 if __name__ == '__main__':
     with open('test.zip', 'rb') as f:
-        convert(f)
+        i = convert(f)
+        if i.is_ok:
+            with open('test2.zip', 'wb') as f2:
+                f2.write(i.data)

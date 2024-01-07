@@ -84,12 +84,6 @@ def add_message_settings(msg_vars: list(set[str]), message: schemas.Message, row
                 push_link = re.search(r'(\[\[)([^|]*?)(\]\])', row_text)
                 if push_link:
                     message.next_msg = push_link.group(2)
-            elif field == '_referal_block':
-                _value = int(value.strip('"\'\\/'))
-                message.referal_block = _value
-            elif field == '_level_block':
-                _value = int(value.strip('"\'\\/'))
-                message.level_block = _value
             elif field == '_wait_reaction':
                 _value = value.strip('"\'\\/')
                 message.wait_reaction = _value

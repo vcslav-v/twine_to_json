@@ -66,8 +66,6 @@ class Message(BaseModel):
     next_msg: str | None = None
     buttons: list[Button] = []
     setters: list[Var] = []
-    referal_block: int = 0
-    level_block: int = 0
     wait_reaction: str = 'std'
     src: str | None = None
 
