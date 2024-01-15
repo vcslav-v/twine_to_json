@@ -27,6 +27,7 @@ class TechMsgType(str, Enum):
     set_lovense_text = 'set_lovense_text'
     error_lovense_text = 'error_lovense_text'
     qr_code_lovense_text = 'qr_code_lovense_text'
+    cancel_button_text = 'cancel_button_text'
 
 
 class Reaction(BaseModel):
