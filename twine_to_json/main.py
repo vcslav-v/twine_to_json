@@ -9,7 +9,7 @@ def get_story_file_names(zip_data: zipfile.ZipFile) -> dict:
     story_file_names = {}
     # Collect html twine files
     for file_name in zip_data.namelist():
-        if file_name.endswith('.html'):
+        if file_name.endswith('.html') and '/' not in file_name:
             story_file_name_raw = file_name.split('-')
             if len(story_file_name_raw) < 3:
                 logger.error(f'File name is not correct {file_name}')
@@ -25,22 +25,22 @@ def get_story_file_names(zip_data: zipfile.ZipFile) -> dict:
                 (int(chapter_number), file_name)
             )
 
-    # Collect json reactions files
+    # Collect json settings files
     for file_name in zip_data.namelist():
-        if file_name.endswith('.json'):
-            reaction_file_name_raw = file_name.split('-')
-            if len(reaction_file_name_raw) < 2:
+        if file_name.endswith('.yaml'):
+            setting_file_name_raw = file_name.split('-')
+            if len(setting_file_name_raw) < 2:
                 logger.error(f'File name is not correct {file_name}')
                 continue
-            language = reaction_file_name_raw[-1].split('.')[0]
+            language = setting_file_name_raw[-1].split('.')[0]
             if language not in story_file_names:
                 logger.error(f'There is no story in {language} for reaction file - {file_name}')
                 continue
-            story_file_names[language].setdefault('reactions', file_name)
+            story_file_names[language].setdefault('settings', file_name)
 
     for language in story_file_names:
-        if 'reactions' not in story_file_names[language]:
-            logger.error(f'There is no reaction file for {language}')
+        if 'settings' not in story_file_names[language]:
+            logger.error(f'There is no settings file for {language}')
             continue
 
     for language in story_file_names:
@@ -170,11 +170,3 @@ def convert(data: io.BytesIO) -> schemas.Result:
         zf.writestr('story.json', story_bunch.model_dump_json())
     zip_buffer.seek(0)
     return schemas.Result(data=zip_buffer.getvalue(), is_ok=True)
-
-
-if __name__ == '__main__':
-    with open('test.zip', 'rb') as f:
-        i = convert(f)
-        if i.is_ok:
-            with open('test2.zip', 'wb') as f2:
-                f2.write(i.data)

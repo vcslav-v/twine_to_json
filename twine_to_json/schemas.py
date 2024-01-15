@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic.functional_validators import field_validator
 from enum import Enum
 import uuid
@@ -17,6 +17,18 @@ class ContentType(str, Enum):
     video_note = 'video_note'
 
 
+class TechMsgType(str, Enum):
+    save_menu_text = 'save_menu_text'
+    cancel_menu_text = 'cancel_menu_text'
+    set_email_text = 'set_email_text'
+    wrong_email_text = 'wrong_email_text'
+    error_email_text = 'error_email_text'
+    success_email_text = 'success_email_text'
+    set_lovense_text = 'set_lovense_text'
+    error_lovense_text = 'error_lovense_text'
+    qr_code_lovense_text = 'qr_code_lovense_text'
+
+
 class Reaction(BaseModel):
     name: str = 'std'
     language: Language = Language.ru
@@ -24,7 +36,7 @@ class Reaction(BaseModel):
 
 
 class AdditionText(BaseModel):
-    tag: str = uuid.uuid4()
+    tag: str = Field(default_factory=lambda: str(uuid.uuid4()))
     condition: str
     text: str
 
@@ -70,10 +82,16 @@ class Message(BaseModel):
     src: str | None = None
 
 
+class TechMsg(BaseModel):
+    type: TechMsgType
+    message: str
+
+
 class Story(BaseModel):
     language: Language
     messages: list[Message] = []
     reactions: list[Reaction] = []
+    tech_messages: list[TechMsg] = []
     start_msg_link: str | None = None
 
 

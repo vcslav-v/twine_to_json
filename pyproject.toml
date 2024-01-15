@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "twine-to-json"
-version = "0.3.10"
+version = "0.3.11"
 description = ""
 authors = ["vaclav-v"]
 readme = "README.md"
@@ -13,6 +13,7 @@ bs4 = "^0.0.1"
 lxml = "^5.0.0"
 pydantic = "^2.5.3"
 regex = "^2023.12.25"
+pyyaml = "^6.0.1"
 
 
 [tool.poetry.group.dev.dependencies]

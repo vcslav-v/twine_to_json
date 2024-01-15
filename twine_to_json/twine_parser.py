@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from twine_to_json import schemas
 from twine_to_json.config import logger, MAX_BUTTON_LEN
 import regex as re
-import json
+import yaml
 import zipfile
 
 
@@ -176,11 +176,13 @@ def parse_chapter(chapter_path: str, story: schemas.Story, zip_data: zipfile.Zip
     return story
 
 
-def add_reaction(reaction_path: str, story: schemas.Story, zip_data: zipfile.ZipFile) -> schemas.Story:
-    with zip_data.open(reaction_path) as f:
-        reactions_data = json.load(f)
-        if 'std' not in reactions_data.keys():
-            logger.error(f'Reaction file must contain "std" reaction - {reaction_path}')
+def setup_story(settings_file_path: str, story: schemas.Story, zip_data: zipfile.ZipFile) -> schemas.Story:
+    with zip_data.open(settings_file_path) as f:
+        settings = yaml.load(f, Loader=yaml.FullLoader)
+
+        reactions_data = settings.get('reactions', {})
+        if not reactions_data or 'std' not in reactions_data.keys():
+            logger.error(f'Reaction file must contain "std" reaction - {settings_file_path}')
         for name, options in reactions_data.items():
             story.reactions.append(
                 schemas.Reaction(
@@ -189,11 +191,25 @@ def add_reaction(reaction_path: str, story: schemas.Story, zip_data: zipfile.Zip
                     options=options,
                 )
             )
+        tech_messages_data = settings.get('tech_messages', {})
+        if not tech_messages_data:
+            logger.error(f'There is no tech messages in {settings_file_path}')
+        for tech_message_type in schemas.TechMsgType.__members__.values():
+            tech_message = tech_messages_data.get(tech_message_type.value)
+            if not tech_message:
+                logger.error(f'There is no {tech_message_type.value} tech message in {settings_file_path}')
+                continue
+            story.tech_messages.append(
+                schemas.TechMsg(
+                    type=schemas.TechMsgType(tech_message_type.value),
+                    message=tech_message,
+                )
+            )
 
     return story
 
 
-def parse_twine(lang: str, zip_data: zipfile.ZipFile, chapters: list[str] = [], reactions: str = '') -> schemas.Story:
+def parse_twine(lang: str, zip_data: zipfile.ZipFile, chapters: list[str] = [], settings: str = '') -> schemas.Story:
     if hasattr(schemas.Language, lang):
         story = schemas.Story(language=schemas.Language(lang))
     else:
@@ -202,10 +218,10 @@ def parse_twine(lang: str, zip_data: zipfile.ZipFile, chapters: list[str] = [], 
     for chapter in chapters:
         story = parse_chapter(chapter, story, zip_data)
 
-    if reactions:
+    if settings:
         try:
-            story = add_reaction(reactions, story, zip_data)
+            story = setup_story(settings, story, zip_data)
         except Exception as e:
-            logger.error(f'Error while parsing reactions for {lang} version - {e}')
+            logger.error(f'Error while parsing settings for {lang} version - {e}')
 
     return story
